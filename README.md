@@ -1,42 +1,55 @@
-# tap-gohighlevel
+# `tap-gohighlevel`
 
-`tap-gohighlevel` is a Singer tap for GoHighLevel.
+GoHighLevel tap class.
 
-Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
+Built with the [Meltano Singer SDK](https://sdk.meltano.com).
 
-<!--
+## Capabilities
 
-Developer TODO: Update the below as needed to correctly describe the install procedure. For instance, if you do not have a PyPi repo, or if you want users to directly install from your git repo, you can modify this step as appropriate.
+* `catalog`
+* `state`
+* `discover`
+* `about`
+* `stream-maps`
+* `schema-flattening`
+* `batch`
 
-## Installation
+## Settings
 
-Install from PyPi:
+| Setting | Required | Default | Description |
+|:--------|:--------:|:-------:|:------------|
+| client_id | True     | None    | Client ID for the API service |
+| client_secret | True     | None    | Client Secret for the API service |
+| refresh_token | True     | None    | Refresh token for the API service |
+| location_id | True     | None    | The Location Id to request data |
+| stream_maps | False    | None    | Config object for stream maps capability. For more information check out [Stream Maps](https://sdk.meltano.com/en/latest/stream_maps.html). |
+| stream_map_config | False    | None    | User-defined config values to be used within map expressions. |
+| faker_config | False    | None    | Config for the [`Faker`](https://faker.readthedocs.io/en/master/) instance variable `fake` used within map expressions. Only applicable if the plugin specifies `faker` as an addtional dependency (through the `singer-sdk` `faker` extra or directly). |
+| faker_config.seed | False    | None    | Value to seed the Faker generator for deterministic output: https://faker.readthedocs.io/en/master/#seeding-the-generator |
+| faker_config.locale | False    | None    | One or more LCID locale strings to produce localized output for: https://faker.readthedocs.io/en/master/#localization |
+| flattening_enabled | False    | None    | 'True' to enable schema flattening and automatically expand nested properties. |
+| flattening_max_depth | False    | None    | The max depth to flatten schemas. |
+| batch_config | False    | None    |             |
+| batch_config.encoding | False    | None    | Specifies the format and compression of the batch files. |
+| batch_config.encoding.format | False    | None    | Format to use for batch files. |
+| batch_config.encoding.compression | False    | None    | Compression format to use for batch files. |
+| batch_config.storage | False    | None    | Defines the storage layer to use when writing batch files |
+| batch_config.storage.root | False    | None    | Root path to use when writing batch files. |
+| batch_config.storage.prefix | False    | None    | Prefix to use when writing batch files. |
 
-```bash
-pipx install tap-gohighlevel
-```
+A full list of supported settings and capabilities is available by running: `tap-gohighlevel --about`
 
-Install from GitHub:
+## Supported Python Versions
 
-```bash
-pipx install git+https://github.com/ORG_NAME/tap-gohighlevel.git@main
-```
-
--->
+* 3.8
+* 3.9
+* 3.10
+* 3.11
+* 3.12
 
 ## Configuration
 
 ### Accepted Config Options
-
-<!--
-Developer TODO: Provide a list of config options accepted by the tap.
-
-This section can be created by copy-pasting the CLI output from:
-
-```
-tap-gohighlevel --about --format=markdown
-```
--->
 
 A full list of supported settings and capabilities for this
 tap is available by running:
@@ -53,9 +66,7 @@ environment variable is set either in the terminal context or in the `.env` file
 
 ### Source Authentication and Authorization
 
-<!--
-Developer TODO: If your tap requires special access on the source system, or any special authentication requirements, provide those here.
--->
+See the docs for more details https://highlevel.stoplight.io/docs/integrations/0443d7d1a4bd0-overview.
 
 ## Usage
 
@@ -100,12 +111,6 @@ poetry run tap-gohighlevel --help
 _**Note:** This tap will work in any Singer environment and does not require Meltano.
 Examples here are for convenience and to streamline end-to-end orchestration scenarios._
 
-<!--
-Developer TODO:
-Your project comes with a custom `meltano.yml` project file already created. Open the `meltano.yml` and follow any "TODO" items listed in
-the file.
--->
-
 Next, install Meltano (if you haven't already) and any needed plugins:
 
 ```bash
@@ -121,8 +126,8 @@ Now you can test and orchestrate using Meltano:
 ```bash
 # Test invocation:
 meltano invoke tap-gohighlevel --version
-# OR run a test `elt` pipeline:
-meltano elt tap-gohighlevel target-jsonl
+# OR run a test `run` pipeline:
+meltano run tap-gohighlevel target-jsonl
 ```
 
 ### SDK Dev Guide

@@ -17,14 +17,11 @@ class GoHighLevelAuthenticator(OAuthAuthenticator, metaclass=SingletonMeta):
         Returns:
             A dict with the request body
         """
-        # TODO: Define the request body needed for the API.
         return {
-            "resource": "https://analysis.windows.net/powerbi/api",
-            "scope": self.oauth_scopes,
             "client_id": self.config["client_id"],
-            "username": self.config["username"],
-            "password": self.config["password"],
-            "grant_type": "password",
+            "client_secret": self.config["client_secret"],
+            "grant_type": "refresh_token",
+            "refresh_token": self.config["refresh_token"],
         }
 
     @classmethod
@@ -39,6 +36,10 @@ class GoHighLevelAuthenticator(OAuthAuthenticator, metaclass=SingletonMeta):
         """
         return cls(
             stream=stream,
-            auth_endpoint="TODO: OAuth Endpoint URL",
-            oauth_scopes="TODO: OAuth Scopes",
+            auth_endpoint="https://services.leadconnectorhq.com/oauth/token",
+            oauth_headers={
+                "Accept": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            default_expiration=86400 # 24 hours
         )

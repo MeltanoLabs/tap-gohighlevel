@@ -12,10 +12,11 @@ updates:
     commit-message:
       prefix: "chore(deps): "
       prefix-development: "chore(deps-dev): "
+    versioning-strategy: increase-if-necessary
   - package-ecosystem: pip
     directory: "/.github/workflows"
     schedule:
-      interval: daily
+      interval: "daily"
     commit-message:
       prefix: "ci: "
   - package-ecosystem: github-actions

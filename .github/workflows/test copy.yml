@@ -1,6 +1,3 @@
-### A CI workflow template that runs linting and python testing
-### TODO: Modify as needed or as desired.
-
 name: Test tap-gohighlevel
 
 on:
@@ -13,28 +10,47 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      FORCE_COLOR: "1"
+      NOXSESSION: tests-${{ matrix.python-version }}
+      PIP_CONSTRAINT: .github/workflows/constraints.txt
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4.1.1
+      with:
+        fetch-depth: 0
+
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v5.0.0
       with:
         python-version: ${{ matrix.python-version }}
+
+    - name: Upgrade pip
+      run: |
+        pip install pip
+        pip --version
+
     - name: Install Poetry
       run: |
-        pip install poetry
+        pipx install poetry
+        pipx inject poetry poetry-dynamic-versioning[plugin]
+        poetry --version
+        poetry self show plugins
+
     - name: Install dependencies
       run: |
         poetry env use ${{ matrix.python-version }}
         poetry install
-    - name: Test with pytest
+
+    - name: Run tests
       env:
         TAP_GOHIGHLEVEL_CLIENT_ID: ${{ secrets.TAP_GOHIGHLEVEL_CLIENT_ID }}
         TAP_GOHIGHLEVEL_CLIENT_SECRET: ${{ secrets.TAP_GOHIGHLEVEL_CLIENT_SECRET }}
         TAP_GOHIGHLEVEL_REFRESH_TOKEN: ${{ secrets.TAP_GOHIGHLEVEL_REFRESH_TOKEN }}
         TAP_GOHIGHLEVEL_LOCATION_ID: ${{ secrets.TAP_GOHIGHLEVEL_LOCATION_ID }}
       run: |
+        poetry run pytest

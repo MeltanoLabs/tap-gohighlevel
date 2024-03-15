@@ -5,7 +5,6 @@ from __future__ import annotations
 from singer_sdk import Tap
 from singer_sdk import typing as th  # JSON schema typing helpers
 
-# TODO: Import your custom stream types here:
 from tap_gohighlevel import streams
 
 
@@ -14,31 +13,31 @@ class TapGoHighLevel(Tap):
 
     name = "tap-gohighlevel"
 
-    # TODO: Update this section with the actual config values you expect:
     config_jsonschema = th.PropertiesList(
         th.Property(
-            "auth_token",
+            "client_id",
             th.StringType,
             required=True,
-            secret=True,  # Flag config as protected.
-            description="The token to authenticate against the API service",
+            description="Client ID for the API service",
         ),
         th.Property(
-            "project_ids",
-            th.ArrayType(th.StringType),
-            required=True,
-            description="Project IDs to replicate",
-        ),
-        th.Property(
-            "start_date",
-            th.DateTimeType,
-            description="The earliest record date to sync",
-        ),
-        th.Property(
-            "api_url",
+            "client_secret",
             th.StringType,
-            default="https://api.mysample.com",
-            description="The url for the API service",
+            required=True,
+            description="Client Secret for the API service",
+        ),
+        th.Property(
+            "refresh_token",
+            th.StringType,
+            required=True,
+            description="Refresh token for the API service",
+        ),
+        th.Property(
+            "location_id",
+            th.StringType,
+            required=True,
+            description="The Location Id to request data",
+            examples=["ve9EPM428h8vShlRW1KT"]
         ),
     ).to_dict()
 
