@@ -24,7 +24,6 @@ class ContactsStream(GoHighLevelStream):
     path = "contacts/"
     primary_keys: t.ClassVar[list[str]] = ["id"]
     records_jsonpath = "$.contacts[*]"
-    # TODO: verify this
     replication_key = "dateUpdated"
 
     schema = th.PropertiesList(
