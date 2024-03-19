@@ -48,8 +48,7 @@ class TapGoHighLevel(Tap):
             A list of discovered streams.
         """
         return [
-            streams.GroupsStream(self),
-            streams.UsersStream(self),
+            streams.ContactsStream(self),
         ]
 
 

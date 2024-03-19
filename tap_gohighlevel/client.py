@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from functools import cached_property
 from typing import Any, Callable
+from urllib.parse import parse_qsl
 
 import requests
 from singer_sdk.pagination import BaseAPIPaginator  # noqa: TCH002
@@ -27,9 +28,6 @@ class GoHighLevelStream(RESTStream):
 
     records_jsonpath = "$[*]"  # Or override `parse_response`.
 
-    # Set this value or override `get_new_paginator`.
-    next_page_token_jsonpath = "$.next_page"  # noqa: S105
-
     @cached_property
     def authenticator(self) -> _Auth:
         """Return a new authenticator object.
@@ -42,9 +40,10 @@ class GoHighLevelStream(RESTStream):
     @property
     def http_headers(self) -> dict:
         """Return the http headers needed."""
-        headers = {}
-        headers["Version"] = API_VERSION
-        return headers
+        return {
+            "Version": API_VERSION,
+            "Accept": "application/json",
+        }
 
     def get_new_paginator(self) -> BaseAPIPaginator:
         """Create a new pagination helper instance.
@@ -75,14 +74,12 @@ class GoHighLevelStream(RESTStream):
         Returns:
             A dictionary of URL query parameters.
         """
-        params: dict = {}
-        # startAfter
-        # startAfterId
-        params["limit"] = 100
-        params["locationId"] = self.config.get("location_id")
+        params: dict = {
+            "limit": 100,
+            "locationId": self.config.get("location_id"),
+        }
         if next_page_token:
-            params["page"] = next_page_token
+            params.update(parse_qsl(next_page_token.query))
         if self.replication_key:
-            params["sort"] = "asc"
-            params["order_by"] = self.replication_key
+            params["startAfter"] = self.replication_key
         return params

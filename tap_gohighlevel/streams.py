@@ -21,7 +21,7 @@ class ContactsStream(GoHighLevelStream):
     """Contacts stream."""
 
     name = "contacts"
-    path = "/contacts"
+    path = "contacts/"
     primary_keys: t.ClassVar[list[str]] = ["id"]
     records_jsonpath = "$.contacts[*]"
     # TODO: verify this
