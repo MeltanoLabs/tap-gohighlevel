@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 import requests
 from singer_sdk.authenticators import OAuthAuthenticator, SingletonMeta
 from singer_sdk.helpers._util import utc_now
@@ -12,7 +14,14 @@ from singer_sdk.helpers._util import utc_now
 class GoHighLevelAuthenticator(OAuthAuthenticator, metaclass=SingletonMeta):
     """Authenticator class for GoHighLevel."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
+        """Create a new authenticator.
+
+        Args:
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
+        self.write_back_config_path = kwargs.pop("write_back_config_path")
         super().__init__(*args, **kwargs)
         self.refresh_token = str(self.config["refresh_token"])
 
@@ -27,7 +36,7 @@ class GoHighLevelAuthenticator(OAuthAuthenticator, metaclass=SingletonMeta):
             "client_id": self.config["client_id"],
             "client_secret": self.config["client_secret"],
             "grant_type": "refresh_token",
-            "refresh_token": str(self.config["refresh_token"]),
+            "refresh_token": self.refresh_token,
             "user_type": "Location",
         }
 
@@ -48,8 +57,26 @@ class GoHighLevelAuthenticator(OAuthAuthenticator, metaclass=SingletonMeta):
                 "Accept": "application/json",
                 "Content-Type": "application/x-www-form-urlencoded",
             },
-            default_expiration=86400 # 24 hours
+            default_expiration=86400,  # 24 hours,
+            write_back_config_path=stream._tap._write_back_config_path,
         )
+
+    def _write_back_to_config(self, key: str, value: str) -> None:
+        """Write back the value to the config file.
+
+        Args:
+            key: The key to write back.
+            value: The value to write back.
+        """
+        # Read the JSON file
+        with open(self.write_back_config_path) as file:
+            data = json.load(file)
+
+        # Update the value for the specified key
+        data[key] = value
+
+        with open(self.write_back_config_path, "w") as file:
+            json.dump(data, file, indent=4)
 
     def update_access_token(self) -> None:
         """Update `access_token` along with: `last_refreshed` and `expires_in`.
@@ -75,8 +102,9 @@ class GoHighLevelAuthenticator(OAuthAuthenticator, metaclass=SingletonMeta):
 
         token_json = token_response.json()
         self.access_token = token_json["access_token"]
-        # TODO: store refresh token
+
         self.refresh_token = token_json["refresh_token"]
+        self._write_back_to_config("refresh_token", self.refresh_token)
         self.logger.info("OAuth refresh_token: %s", self.refresh_token)
         expiration = token_json.get("expires_in", self._default_expiration)
         self.expires_in = int(expiration) if expiration else None

@@ -68,6 +68,16 @@ environment variable is set either in the terminal context or in the `.env` file
 
 See the docs for more details https://highlevel.stoplight.io/docs/integrations/0443d7d1a4bd0-overview.
 
+## Write Back Feature
+
+The GoHighlevel API uses OAuth credentials but each time the refresh token is used to get a new access token, the refresh token is invalidated.
+This means that we need to store the new refresh token provided in the access token response, otherwise we need to go through the authorization flow again to get a new valid refresh token.
+This is a pain and isn't directly solved by the SDK or Meltano, see https://github.com/meltano/sdk/issues/106 and https://github.com/meltano/meltano/issues/2660.
+
+To solve this, the tap implements a writeback feature where the new refresh token is set in the input config.json file every time it changes.
+As a result an exception will be thrown unless exactly one config file is provided.
+Also the config file will need have write access so the tap can edit it.
+
 ## Usage
 
 You can easily run `tap-gohighlevel` by itself or in a pipeline using [Meltano](https://meltano.com/).

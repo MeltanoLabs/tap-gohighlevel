@@ -2,20 +2,12 @@
 
 from __future__ import annotations
 
-import sys
 import typing as t
 
 from singer_sdk import typing as th  # JSON Schema typing helpers
 
 from tap_gohighlevel.client import GoHighLevelStream
 
-if sys.version_info >= (3, 9):
-    import importlib.resources as importlib_resources
-else:
-    import importlib_resources
-
-
-SCHEMAS_DIR = importlib_resources.files(__package__) / "schemas"
 
 class ContactsStream(GoHighLevelStream):
     """Contacts stream."""
