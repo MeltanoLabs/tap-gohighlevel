@@ -12,6 +12,7 @@ from tap_gohighlevel.client import GoHighLevelStream
 class ContactsStream(GoHighLevelStream):
     """Contacts stream."""
 
+    # https://highlevel.stoplight.io/docs/integrations/ab55933a57f6f-get-contacts
     name = "contacts"
     path = "contacts/"
     primary_keys: t.ClassVar[list[str]] = ["id"]
@@ -30,7 +31,7 @@ class ContactsStream(GoHighLevelStream):
         th.Property("locationId", th.StringType),
         th.Property("businessId", th.StringType),
         th.Property("attributions", th.ArrayType(th.ObjectType())),
-        th.Property("followers", th.StringType),
+        th.Property("followers", th.ArrayType(th.StringType)),
         th.Property("email", th.StringType),
         th.Property("country", th.StringType),
         th.Property("dndSettings", th.ObjectType()),
@@ -66,6 +67,7 @@ class ContactsStream(GoHighLevelStream):
 class CalendarsStream(GoHighLevelStream):
     """Calendars stream."""
 
+    # https://highlevel.stoplight.io/docs/integrations/e55dec1be7bee-get-calendars
     name = "calendars"
     path = "calendars/"
     primary_keys: t.ClassVar[list[str]] = ["id"]
@@ -130,7 +132,7 @@ class CalendarsStream(GoHighLevelStream):
 class OpportunitiesStream(GoHighLevelStream):
     """Opportunities stream."""
 
-    # https://highlevel..io/docs/integrations/a163e98c45b8d-search-opportunity
+    # https://highlevel.stoplight.io/docs/integrations/a163e98c45b8d-search-opportunity
     name = "opportunities"
     path = "opportunities/search"
     primary_keys: t.ClassVar[list[str]] = ["id"]
@@ -243,9 +245,9 @@ class ConversationsStream(GoHighLevelStream):
         th.Property("contactName", th.StringType),
         th.Property("email", th.StringType),
         th.Property("phone", th.StringType),
-        th.Property("dateAdded", th.DateTimeType),
-        th.Property("dateUpdated", th.DateTimeType),
-        th.Property("lastMessageDate", th.DateTimeType),
+        th.Property("dateAdded", th.IntegerType),
+        th.Property("dateUpdated", th.IntegerType),
+        th.Property("lastMessageDate", th.IntegerType),
         th.Property("companyName", th.StringType),
         th.Property("tags", th.ArrayType(th.StringType)),
         th.Property("scoring", th.ArrayType(th.StringType)),
