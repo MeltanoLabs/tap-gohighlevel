@@ -66,6 +66,16 @@ class TapGoHighLevel(Tap):
         """
         return [
             streams.ContactsStream(self),
+            streams.CalendarsStream(self),
+            streams.OpportunitiesStream(self),
+            streams.LocationStream(
+                self,
+                path=f"locations/{self.config.get('location_id')}"
+            ),
+            streams.UsersStream(self),
+            streams.BusinessesStream(self),
+            streams.ConversationsStream(self),
+
         ]
 
 

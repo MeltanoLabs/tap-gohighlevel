@@ -17,4 +17,4 @@ class GoHighLevelPaginator(BaseHATEOASPaginator):
             response: The last API response.
         """
         # TOOD: validate this
-        return response.json().get("meta").get("nextPageUrl")
+        return response.json().get("meta", {}).get("nextPageUrl")

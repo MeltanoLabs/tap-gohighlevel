@@ -15,18 +15,22 @@ from tap_gohighlevel.paginator import GoHighLevelPaginator
 
 _Auth = Callable[[requests.PreparedRequest], requests.PreparedRequest]
 
-API_VERSION = "2021-07-28"
 
 
 class GoHighLevelStream(RESTStream):
     """GoHighLevel stream class."""
+
+    TYPE_CONFORMANCE_LEVEL = 2
+    records_jsonpath = "$[*]"  # Or override `parse_response`.
+
+    def _get_default_params(self, context) -> dict | None:
+        return None
 
     @property
     def url_base(self) -> str:
         """Return the API URL root, configurable via tap settings."""
         return "https://services.leadconnectorhq.com/"
 
-    records_jsonpath = "$[*]"  # Or override `parse_response`.
 
     @cached_property
     def authenticator(self) -> _Auth:
@@ -41,7 +45,7 @@ class GoHighLevelStream(RESTStream):
     def http_headers(self) -> dict:
         """Return the http headers needed."""
         return {
-            "Version": API_VERSION,
+            "Version": self.api_version,
             "Accept": "application/json",
         }
 
@@ -74,10 +78,10 @@ class GoHighLevelStream(RESTStream):
         Returns:
             A dictionary of URL query parameters.
         """
-        params: dict = {
-            "limit": 100,
-            "locationId": self.config.get("location_id"),
-        }
+        params: dict = {}
+        default_params = self._get_default_params(context)
+        if default_params:
+            params.update(default_params)
         if next_page_token:
             params.update(parse_qsl(next_page_token.query))
         elif self.replication_key and self.get_starting_replication_key_value(context):
