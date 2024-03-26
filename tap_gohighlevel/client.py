@@ -84,6 +84,4 @@ class GoHighLevelStream(RESTStream):
             params.update(default_params)
         if next_page_token:
             params.update(parse_qsl(next_page_token.query))
-        elif self.replication_key and self.get_starting_replication_key_value(context):
-            params["startAfter"] = self.get_starting_replication_key_value(context)
         return params
