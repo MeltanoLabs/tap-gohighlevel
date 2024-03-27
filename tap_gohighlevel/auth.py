@@ -105,7 +105,10 @@ class GoHighLevelAuthenticator(OAuthAuthenticator, metaclass=SingletonMeta):
 
         self.refresh_token = token_json["refresh_token"]
         self._write_back_to_config("refresh_token", self.refresh_token)
-        self.logger.info("OAuth refresh_token: %s", self.refresh_token)
+        self.logger.info(
+            "OAuth refresh_token updated in %s",
+            self.write_back_config_path
+        )
         expiration = token_json.get("expires_in", self._default_expiration)
         self.expires_in = int(expiration) if expiration else None
         if self.expires_in is None:
